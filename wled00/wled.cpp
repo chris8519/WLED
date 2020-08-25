@@ -278,7 +278,10 @@ void WLED::initAP(bool resetAP)
     if (udpRgbPort > 0 && udpRgbPort != ntpLocalPort && udpRgbPort != udpPort) {
       udpRgbConnected = rgbUdp.begin(udpRgbPort);
     }
-
+    if (udpApiEnabled && udpApiPort > 0 && udpApiPort != ntpLocalPort && udpApiPort != udpPort && udpApiPort != udpRgbPort) {
+      udpApiConnected = apiUdp.begin(udpApiPort);
+    }
+  
     dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
     dnsServer.start(53, "*", WiFi.softAPIP());
   }
@@ -400,6 +403,8 @@ void WLED::initInterfaces()
     udpConnected = notifierUdp.begin(udpPort);
     if (udpConnected && udpRgbPort != udpPort)
       udpRgbConnected = rgbUdp.begin(udpRgbPort);
+    if (udpApiEnabled && udpConnected && udpApiPort != udpPort && udpApiPort != udpRgbPort)
+      udpApiConnected = apiUdp.begin(udpApiPort);
   }
   if (ntpEnabled)
     ntpConnected = ntpUdp.begin(ntpLocalPort);
